@@ -1,0 +1,22 @@
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  list-style: none;
+  flex-basis: calc((100% - 5 * 15px) / 4);
+  overflow: hidden;
+  border-radius: 15px;
+  scale: 1;
+}
+
+.item:hover {
+  flex-basis: calc(100% / 4);
+  scale: 1.2;
+  z-index: 2;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
