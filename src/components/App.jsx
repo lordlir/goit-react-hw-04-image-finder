@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 
 import { dataImages } from './api/api';
@@ -9,7 +9,84 @@ import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 import { Loader } from './Loader/Loader';
 
-export class App extends Component {
+export const App = () => {
+  const [query, setQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [images, setImages] = useState(null);
+  const [showModal, setSModal] = useState(false);
+  const [modalImage, setMImg] = useState({
+    currentImageUrl: null,
+    currentImageDescription: null,
+  });
+
+  const [isLoading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleFormSubmit = query => {
+    setQuery(query);
+    setPage(1);
+    setImages([]);
+  };
+
+  const onNewPage = () => {
+    setPage(prevPage => prevPage + 1);
+  };
+
+  const toggleModal = () => {
+    setSModal(prevSModal => !prevSModal);
+  };
+
+  const openModal = e => {
+    const currentImageUrl = e.target.dataset.large;
+    const currentImageDescription = e.target.alt;
+
+    if (e.target.nodeName === 'IMG') {
+      setMImg({
+        currentImageUrl,
+        currentImageDescription,
+      });
+      toggleModal();
+    }
+  };
+
+  useEffect(() => {
+    const search = async () => {
+      try {
+        setLoading(true);
+        const dataImg = await dataImages(query, page);
+        console.log(dataImg);
+        setImages(dataImg.hits);
+        setLoading(false);
+      } catch (error) {}
+    };
+    if (query) {
+      search();
+    }
+  }, [query]);
+  // console.log(images);
+  return (
+    <>
+      <Searchbar onSubmit={handleFormSubmit}></Searchbar>
+      {!!images?.length && (
+        <ImageGallery images={images} openModal={openModal} />
+      )}
+      {isLoading && <Loader />}
+      {/* {imagesOnPage >= 12 && imagesOnPage < totalImages && (
+        <Button onNewPage={onNewPage} />
+      )} */}
+      {showModal && (
+        <Modal
+          onClose={toggleModal}
+          // currentImageUrl={currentImageUrl}
+          // currentImageDescription={currentImageDescription}
+        />
+      )}
+      <ToastContainer />
+    </>
+  );
+};
+
+/* export class App extends Component {
   state = {
     query: '',
     page: 1,
@@ -80,7 +157,7 @@ export class App extends Component {
     this.setState({ query, images: [], page: 1 });
   };
 
-  onNextFetch = () => {
+  onNewPage = () => {
     this.setState(({ page }) => ({ page: page + 1 }));
   };
 
@@ -136,3 +213,4 @@ export class App extends Component {
     );
   }
 }
+*/
