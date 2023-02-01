@@ -3,7 +3,6 @@ import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import s from './ImageGallery.module.css';
 
 export const ImageGallery = ({ images, openModal }) => {
-  console.log(images);
   return (
     <ul className={s.container}>
       {images.map(({ id, tags, webformatURL, largeImageURL }) => (
